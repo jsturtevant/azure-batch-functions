@@ -52,14 +52,3 @@ module.exports = function (context, req) {
         context.done();
     });
 };
-
-function loop(nextLink, batch_client, context) {
-    if (nextLink !== null && nextLink !== undefined) {
-        return batch_client.account.listNodeAgentSkusNext(nextLink).then((res) => {
-            context.log(res);
-            return loop(res.odatanextLink, batch_client);
-        });
-    }
-
-    return Promise.resolve();
-};
