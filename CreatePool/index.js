@@ -3,10 +3,10 @@ var batch = require('azure-batch');
 module.exports = function (context, req) {
     context.log('processing...');
     
-    var accountName = 'workshopbatch';
-    var accountKey = 'MuO+jVAcbgMf4HVrbHgwwZCGLK0/DWgt+TYVUtGYcwHRayNjVg/2kmczu3l3c813FKsRfy/A66ofqSnv1Jk4wA==';
-    var accountUrl = 'https://workshopbatch.eastus.batch.azure.com'
-
+    var accountName = process.env.batchAccountName;
+    var accountKey = process.env.batchAccountKey;
+    var accountUrl = process.env.batchAccountUrl;
+    
     var credentials = new batch.SharedKeyCredentials(accountName,accountKey);
     var batch_client = new batch.ServiceClient(credentials,accountUrl);
 
