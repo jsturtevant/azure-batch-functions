@@ -1,0 +1,17 @@
+{
+  "name": "batch-functions-example",
+  "version": "1.0.0",
+  "description": "Nodejs project working with docker and Azure Batch",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "James Sturtevant",
+  "license": "MIT",
+  "dependencies": {
+    "azure-batch": "^2.0.0-preview"
+  },
+  "repository":"https://github.com/jsturtevant/azure-batch-functions",
+  "README":"https://github.com/jsturtevant/azure-batch-functions/blob/master/README.md"
+}
