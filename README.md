@@ -2,7 +2,7 @@
 
 ## Developing
 
-## Azure Batch
+### Azure Batch
 Get the [Azure Cli 2.0](https://docs.microsoft.com/en-us/cli/azure/overview) or use ```docker run -it azuresdk/azure-cli-python```.
 
 Set you subscription:
@@ -22,7 +22,7 @@ az provider show -n Microsoft.Batch -o table #run a few times and wait until it 
 az batch account create -l eastus -g azurebatchfunctionsrg -n myazurebatch
 ```
 
-## Azure functions Component
+### Azure functions Component
 To get started:
 
 1. Install azure functions runtime ```npm i -g azure-functions-core-tools```
