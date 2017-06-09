@@ -29,9 +29,11 @@ To get started:
 2. Clone the repo and cd into the folder
 3.  Run ```npm install```
 4. Update rename  ```example.settings.json``` to ```local.settings.json```
-5. Update settings:
-    
+5. Upload [docker_install_start_task.sh](docker/docker_install_start_task.sh) to a storage account and get a SAS token url.  (going to add support for [auto generating] (https://github.com/Azure-Samples/functions-node-sas-token))
+6. Update settings:
+
     - get your batch keys by running ```az batch account keys list -g dockerworkshop -n workshopbatch```
+    - get the SAS token through [storage explorer](http://storageexplorer.com/) for now.
 
 ### Test function
 The following command will start the function host process in separate terminal and call the function ```GetPoolInfo``` passing the json object as body to request.  For any of the other functions replace the name (some don't need the sample data as well). 
@@ -47,3 +49,4 @@ func new --language JavaScript --template HttpTrigger --name NameOfFunction
 ```
 
 Find the docs for the node.js library at http://azure.github.io/azure-sdk-for-node/azure-batch/latest/
+

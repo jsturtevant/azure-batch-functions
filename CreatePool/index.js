@@ -29,10 +29,10 @@ module.exports = function (context, req) {
             targetDedicated: numVMs,
             targetLowPriorityNodes: numVMs,
             startTask: {
-                commandLine: "./docker_starttask.sh > startup.log",
+                commandLine: "./docker_install_start_task.sh > startup.log",
                 resourceFiles: [{
                     'blobSource': process.env.blobsasurl,
-                    'filePath': 'docker_starttask.sh'
+                    'filePath': 'docker_install_start_task.sh'
                 }],
                 userIdentity: {
                     autoUser: {
