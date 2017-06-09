@@ -16,7 +16,6 @@ module.exports = function (context, req) {
         var agentNode = agentNodes.filter(x => x.id === 'batch.node.ubuntu 16.04')[0];
         var verifiedImage = agentNode.verifiedImageReferences[0];
         
-        // Creating Image reference configuration for Ubuntu Linux VM
         var vmconfig = {imageReference:verifiedImage,
                         nodeAgentSKUId:"batch.node.ubuntu 16.04"};
         var vmSize = "STANDARD_A1";
@@ -36,7 +35,7 @@ module.exports = function (context, req) {
                     'filePath': 'docker_starttask.sh'
                 }],
                 userIdentity: {
-                    autouser: {
+                    autoUser: {
                         elevationLevel: 'admin'
                     }
                 },
