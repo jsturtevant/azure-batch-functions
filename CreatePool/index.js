@@ -26,14 +26,27 @@ module.exports = function (context, req) {
         var vmSize = "STANDARD_A1";
         var numVMs = 4;
 
-        var poolConfig = {  
-            id:poolid,
-            displayName:poolid,
-            vmSize:vmSize,
-            virtualMachineConfiguration:vmconfig,
-            targetDedicated:numVMs,
-            targetLowPriorityNodes:numVMs,
-            enableAutoScale:false 
+        var poolConfig = {
+            id: poolid,
+            displayName: poolid,
+            vmSize: vmSize,
+            virtualMachineConfiguration: vmconfig,
+            targetDedicated: numVMs,
+            targetLowPriorityNodes: numVMs,
+            startTask: {
+                commandLine: "./docker_starttask.sh > startup.log",
+                resourceFiles: [{
+                    'blobSource': process.env.blobsasurl,
+                    'filePath': 'docker_starttask.sh'
+                }],
+                userIdentity: {
+                    autouser: {
+                        elevationLevel: 'admin'
+                    }
+                },
+                waitForSuccess: true
+            },
+            enableAutoScale: false
         };
 
         batch_client.pool.exists(poolid).then(exists => {

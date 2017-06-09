@@ -25,16 +25,15 @@ module.exports = function (context, req) {
         var pool_config = {poolId:poolid};
         var jobId = "processaudiojob";
         
-        // todo create a sas token
         var job_prep_task_config = {
             id: "installprereq", 
-            commandLine: "sudo sh docker_starttask.sh > startup.log", 
-            resourceFiles: [{ 
-                'blobSource': process.env.blobsasurl, 
-                'filePath': 'docker_starttask.sh' 
-            }], 
-            waitForSuccess: true, 
-            runElevated: true
+            commandLine: "docker run hello-world", 
+            userIdentity: {
+                    autouser: {
+                        elevationLevel: 'nonAdmin'
+                    }
+                },
+            waitForSuccess: true
         };
 
         var job_config = {
