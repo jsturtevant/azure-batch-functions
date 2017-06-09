@@ -31,7 +31,7 @@ module.exports = function (context, req) {
         }));
     }); 
 
-    Promise.all(promises.map(reflect)).then(function(results){
+    Promise.all(promises.map(helpers.reflect)).then(function(results){
         context.log("completed all promises");
 
         var success = results.filter(x => x.status === "resolved");
@@ -49,8 +49,3 @@ module.exports = function (context, req) {
     });
 };
 
-//https://stackoverflow.com/a/31424853
-function reflect(promise){
-    return promise.then(function(v){ return {v:v, status: "resolved" }},
-                        function(e){ return {e:e, status: "rejected" }});
-}
