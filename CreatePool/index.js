@@ -31,7 +31,8 @@ module.exports = function (context, req) {
             displayName:poolid,
             vmSize:vmSize,
             virtualMachineConfiguration:vmconfig,
-            targetDedicatedComputeNodes:numVMs,
+            targetDedicated:numVMs,
+            targetLowPriorityNodes:numVMs,
             enableAutoScale:false 
         };
 
