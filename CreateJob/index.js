@@ -1,14 +1,10 @@
 var batch = require('azure-batch');
+var helpers = require('../helpers/helpers.js');
 
 module.exports = function (context, req) {
     context.log('processing...');
     
-    var accountName = process.env.batchAccountName;
-    var accountKey = process.env.batchAccountKey;
-    var accountUrl = process.env.batchAccountUrl;
-    
-    var credentials = new batch.SharedKeyCredentials(accountName,accountKey);
-    var batch_client = new batch.ServiceClient(credentials,accountUrl);
+    var batch_client = helpers.batchClientFactory();
 
     var poolid = "pool" + req.body.poolid;
     var jobid = "job" + req.body.jobid;
