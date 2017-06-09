@@ -37,7 +37,7 @@ To get started:
 The following command will start the function host process in separate terminal and call the function ```GetPoolInfo``` passing the json object as body to request.  For any of the other functions replace the name (some don't need the sample data as well). 
 
 ```
-func run GetPoolInfo -f sample.dat
+func run GetPoolInfo -f GetPoolInfo/sample.dat
 ```
 
 #### Add a new function
@@ -45,3 +45,5 @@ func run GetPoolInfo -f sample.dat
 ```
 func new --language JavaScript --template HttpTrigger --name NameOfFunction
 ```
+
+Find the docs for the node.js library at http://azure.github.io/azure-sdk-for-node/azure-batch/latest/
