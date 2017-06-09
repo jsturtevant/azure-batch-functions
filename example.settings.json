@@ -4,6 +4,7 @@
     "AzureWebJobsStorage": "",
     "batchAccountKey":"",
     "batchAccountName":"yourbatchname",
-    "batchAccountUrl":"https://yourbatchname.eastus.batch.azure.com"
+    "batchAccountUrl":"https://yourbatchname.eastus.batch.azure.com",
+    "blobsasurl": ""
   }
 }
