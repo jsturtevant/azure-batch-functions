@@ -11,7 +11,7 @@ module.exports = function (context, req) {
     var batch_client = new batch.ServiceClient(credentials,accountUrl);
 
     // Create a unique Azure Batch pool ID
-    var poolid = "pool" + req.params.poolid;
+    var poolid = "pool" + req.body.poolid;
     
     context.log(`Creating new pool ${poolid}...`);    
     batch_client.account.listNodeAgentSkus().then((agentNodes) => {
@@ -24,7 +24,7 @@ module.exports = function (context, req) {
         var vmconfig = {imageReference:verifiedImage,
                         nodeAgentSKUId:"batch.node.ubuntu 16.04"};
         var vmSize = "STANDARD_A1";
-        var numVMs = 4;
+        var numVMs = 2;
 
         var poolConfig = {
             id: poolid,

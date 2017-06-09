@@ -10,7 +10,8 @@ module.exports = function (context, req) {
     var credentials = new batch.SharedKeyCredentials(accountName,accountKey);
     var batch_client = new batch.ServiceClient(credentials,accountUrl);
 
-    var poolid = "pool" + req.params.poolid;
+    var poolid = "pool" + req.body.poolid;
+    var jobid = "job" + req.body.jobid;
     
     batch_client.pool.exists(poolid).then(exists => {
         if (!exists){
@@ -23,7 +24,6 @@ module.exports = function (context, req) {
         }
 
         var pool_config = {poolId:poolid};
-        var jobId = "processaudiojob";
         
         var job_prep_task_config = {
             id: "installprereq", 

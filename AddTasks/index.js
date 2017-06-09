@@ -11,9 +11,9 @@ module.exports = function (context, req) {
     var batch_client = new batch.ServiceClient(credentials,accountUrl);
 
     // Create a unique Azure Batch pool ID
-    var jobid = req.body.jobid;
+    var jobid = "job" + req.body.jobid;
     
-    context.log(`Creating new pool ${jobid}...`);   
+    context.log(`Adding tasks to ${jobid}...`);   
 
     var tasksToAdd = ["task1","task2","task3","task4"]
     
