@@ -10,26 +10,41 @@ module.exports = function (context, req) {
     var credentials = new batch.SharedKeyCredentials(accountName,accountKey);
     var batch_client = new batch.ServiceClient(credentials,accountUrl);
 
-    // Creating Image reference configuration for Ubuntu Linux VM
-    var imgRef = {publisher:"Canonical",offer:"UbuntuServer",sku:"16.04.0-LTS",version:"latest"}
-    var vmconfig = {imageReference:imgRef,nodeAgentSKUId:"batch.node.ubuntu 16.04"}
-    var vmSize = "STANDARD_A1"
-    var numVMs = 4
-
     // Create a unique Azure Batch pool ID
     var poolid = "pool" + req.params.poolid;
     
     context.log(`Creating new pool ${poolid}...`);    
+    batch_client.account.listNodeAgentSkus().then((agentNodes) => {
+        context.log(agentNodes);
 
-    let options = {}
-    options.accountListNodeAgentSkusOptions = { maxResults : 5 };
+        var agentNode = agentNodes.filter(x => x.id === 'batch.node.ubuntu 16.04')[0];
+        var verifiedImage = agentNode.verifiedImageReferences[0];
+        
+        // Creating Image reference configuration for Ubuntu Linux VM
+        var vmconfig = {imageReference:verifiedImage,
+                        nodeAgentSKUId:"batch.node.ubuntu 16.04"};
+        var vmSize = "STANDARD_A1";
+        var numVMs = 4;
 
-    batch_client.account.listNodeAgentSkus(options).then((res) => {
-        context.log(res);
+        var poolConfig = {  
+            id:poolid,
+            displayName:poolid,
+            vmSize:vmSize,
+            virtualMachineConfiguration:vmconfig,
+            targetDedicatedComputeNodes:numVMs,
+            enableAutoScale:false 
+        };
 
-        loop(res.odatanextLink, batch_client, context).then(() => {
-            context.log('done.');
-            context.done();
+        batch_client.pool.exists(poolid).then(exists => {
+            if (exists){
+                context.log("already exists");
+                context.done();
+            }
+
+            batch_client.pool.add(poolConfig).then(() =>{
+                context.log('pool added.')
+                context.done();    
+            });
         });
     }).catch((err) => {
         context.log('An error occurred.');
