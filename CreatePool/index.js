@@ -27,7 +27,7 @@ module.exports = function (context, req) {
     batch_client.account.listNodeAgentSkus(options).then((res) => {
         context.log(res);
 
-        loop(res.odatanextLink, batch_client.account.listNodeAgentSkusNext).then(() => {
+        loop(res.odatanextLink, batch_client, context).then(() => {
             context.log('done.');
             context.done();
         });
@@ -38,11 +38,11 @@ module.exports = function (context, req) {
     });
 };
 
-function loop(nextLink, callNext) {
+function loop(nextLink, batch_client, context) {
     if (nextLink !== null && nextLink !== undefined) {
-        return callNext(nextLink).then((res) => {
+        return batch_client.account.listNodeAgentSkusNext(nextLink).then((res) => {
             context.log(res);
-            return loop(res.odatanextLink, callNext);
+            return loop(res.odatanextLink, batch_client);
         });
     }
 
