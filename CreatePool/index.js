@@ -21,6 +21,8 @@ module.exports = function (context, req) {
         var vmSize = "STANDARD_A1";
         var numVMs = 2;
 
+        var sastoken = helpers.generateSasToken("azurebatch", "docker_install_start_task.sh")
+
         var poolConfig = {
             id: poolid,
             displayName: poolid,
@@ -31,8 +33,8 @@ module.exports = function (context, req) {
             startTask: {
                 commandLine: "./docker_install_start_task.sh > startup.log",
                 resourceFiles: [{
-                    'blobSource': process.env.blobsasurl,
-                    'filePath': 'docker_install_start_task.sh'
+                    blobSource: sastoken.uri,
+                    filePath: 'docker_install_start_task.sh'
                 }],
                 userIdentity: {
                     autoUser: {

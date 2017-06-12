@@ -10,8 +10,9 @@
   "author": "James Sturtevant",
   "license": "MIT",
   "dependencies": {
-    "azure-batch": "^2.0.0-preview"
+    "azure-batch": "^2.0.0-preview",
+    "azure-storage": "^2.1.0"
   },
-  "repository":"https://github.com/jsturtevant/azure-batch-functions",
-  "README":"https://github.com/jsturtevant/azure-batch-functions/blob/master/README.md"
+  "repository": "https://github.com/jsturtevant/azure-batch-functions",
+  "README": "https://github.com/jsturtevant/azure-batch-functions/blob/master/README.md"
 }

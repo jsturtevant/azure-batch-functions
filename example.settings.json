@@ -5,6 +5,6 @@
     "batchAccountKey":"",
     "batchAccountName":"yourbatchname",
     "batchAccountUrl":"https://yourbatchname.eastus.batch.azure.com",
-    "blobsasurl": ""
+    "AzureWebJobsStorage": "your-connectionstring"
   }
 }
