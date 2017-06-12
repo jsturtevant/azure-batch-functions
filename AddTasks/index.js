@@ -20,7 +20,12 @@ module.exports = function (context, req) {
         var taskConfig = {
             id: taskName,
             displayName: 'process audio in ' + taskName,
-            commandLine: 'docker run jsturtevant/pyprocessor ' + taskName
+            commandLine: 'docker run jsturtevant/pyprocessor ' + taskName,
+            userIdentity: {
+                autoUser: {
+                    elevationLevel: 'admin'
+                }
+            },
         };
 
         promises.push(batch_client.task.add(jobid, taskConfig).then(_ => {
