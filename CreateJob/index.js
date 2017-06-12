@@ -21,14 +21,15 @@ module.exports = function (context, req) {
 
         var pool_config = {poolId:poolid};
         
+        //pre-load image for fast task runs times
         var job_prep_task_config = {
             id: "installprereq", 
-            commandLine: "docker run hello-world", 
+            commandLine: "docker pull jsturtevant/pyprocessor", 
             userIdentity: {
-                    autouser: {
-                        elevationLevel: 'nonAdmin'
-                    }
-                },
+                autoUser: {
+                    elevationLevel: 'admin'
+                }
+            },
             waitForSuccess: true
         };
 
