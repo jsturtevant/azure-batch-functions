@@ -16,11 +16,13 @@ module.exports = function (context, req) {
     var promises = [];
     tasksToAdd.forEach(function(val,index){           
         var taskName = val;
-               
+
+        var task = [`docker run jsturtevant/pyprocessor ${taskName}`];
+
         var taskConfig = {
             id: taskName,
             displayName: 'process audio in ' + taskName,
-            commandLine: 'docker run jsturtevant/pyprocessor ' + taskName,
+            commandLine: helpers.wrapInShell(task),
             userIdentity: {
                 autoUser: {
                     elevationLevel: 'admin'

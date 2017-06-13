@@ -61,5 +61,14 @@ module.exports = {
             token: sasToken,
             uri: blobService.getUrl(container, blobName, sasToken, true)
         };
+    },
+
+    /**
+     * Wrap commands in shell.
+     * 
+     * https://github.com/Azure/azure-batch-samples/tree/master/Python/Batch#azure-batch-on-linux-best-practices
+     */
+    wrapInShell: function(commands){
+        return `/bin/bash -c \'set -e; set -o pipefail; ${commands.join(';')}; wait\'`;
     }
 }
