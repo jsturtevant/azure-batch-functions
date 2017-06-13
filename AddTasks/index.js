@@ -1,5 +1,6 @@
 var batch = require('azure-batch');
 var helpers = require('../helpers/helpers.js');
+var crypto = require('crypto');
 
 module.exports = function (context, req) {
     context.log('processing...');
@@ -8,21 +9,32 @@ module.exports = function (context, req) {
 
     // Create a unique Azure Batch pool ID
     var jobid = "job" + req.body.jobid;
+    var forcePull = req.body.forcePull;
+    var imageName = req.body.imageName;
+    var makeTasksRandom = req.body.makeTasksRandom;
     
-    context.log(`Adding tasks to ${jobid}...`);   
 
-    var tasksToAdd = ["task1","task2","task3","task4"]
+    var tasksToAdd = ["158420"]
     
-    var promises = [];
-    tasksToAdd.forEach(function(val,index){           
-        var taskName = val;
-
-        var task = [`docker run jsturtevant/pyprocessor ${taskName}`];
+    var tasks = [];
+    tasksToAdd.forEach(function(val,index){
+        var taskName = `track_${val}`;
+        if (makeTasksRandom){
+            // https://stackoverflow.com/a/14869745
+            var id = crypto.randomBytes(10).toString('hex');
+            taskName = taskName.concat("_",id);
+        }
+        
+        var commands = [`docker run ${imageName} ${val}`];
+        if (forcePull){
+            // don't know which node this will be run on so force on all tasks.
+            commands.unshift(`docker pull ${imageName}`)
+        }
 
         var taskConfig = {
             id: taskName,
-            displayName: 'process audio in ' + taskName,
-            commandLine: helpers.wrapInShell(task),
+            displayName: taskName,
+            commandLine: helpers.wrapInShell(commands),
             userIdentity: {
                 autoUser: {
                     elevationLevel: 'admin'
@@ -30,28 +42,19 @@ module.exports = function (context, req) {
             },
         };
 
-        promises.push(batch_client.task.add(jobid, taskConfig).then(_ => {
-            context.log(`task added ${taskName}`)
-        }).catch(err => {
-            context.log(`An error occurred processing ${taskName}.`);
-            context.log(err);
-        }));
-    }); 
+        context.log(`adding task ${taskName} to list`);
+        tasks.push(taskConfig);
+    });
 
-    Promise.all(promises.map(helpers.reflect)).then(function(results){
-        context.log("completed all promises");
-
-        var success = results.filter(x => x.status === "resolved");
-        var rejected = results.filter(x => x.status === "rejected");
-
-        success.forEach(function(val,index){    
-            context.log(val);
-        });
-
-        rejected.forEach(function(val,index){    
-            context.log(val);
-        });
-
+    batch_client.task.addCollection(jobid, tasks).then((tc) => {
+        context.log(`added collection of tasks`);
+        context.log(tc);
+        //todo handle each task completion indepently.
+        
+        context.done();
+    }).catch(err => {
+        context.log(`An error occurred processing...`);
+        context.log(err);
         context.done();
     });
 };

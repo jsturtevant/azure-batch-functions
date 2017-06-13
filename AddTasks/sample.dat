@@ -1,3 +1,6 @@
 {
     "jobid": "000"
+    "forcePull": true,
+    "imageName": "jsturtevant/pyprocessor",
+    "makeTasksRandom": true
 }
