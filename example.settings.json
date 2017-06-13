@@ -1,10 +1,9 @@
 {
   "IsEncrypted": false,
   "Values": {
-    "AzureWebJobsStorage": "",
     "batchAccountKey":"",
     "batchAccountName":"yourbatchname",
     "batchAccountUrl":"https://yourbatchname.eastus.batch.azure.com",
-    "AzureWebJobsStorage": "your-connectionstring"
+    "storageConnectionString": "your-connectionstring"
   }
 }
