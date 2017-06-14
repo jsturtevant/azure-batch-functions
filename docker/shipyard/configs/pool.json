@@ -1,0 +1,19 @@
+{
+    "pool_specification": {
+        "id": "shipyard",
+        "vm_configuration": {
+            "platform_image": {
+                "publisher": "Canonical",
+                "offer": "UbuntuServer",
+                "sku": "16.04-LTS"
+            }
+        },
+        "vm_size": "STANDARD_A1",
+        "vm_count": {
+            "dedicated": 0,
+            "low_priority": 2
+        },
+        "reboot_on_start_task_failed": false,
+        "block_until_all_global_resources_loaded": true
+    }
+}
