@@ -22,7 +22,7 @@ batch_client.pool.get(poolid).then((poolinfo) => {
 
         if (poolinfo.enableAutoScale == false)
         {
-            context.log('Auto Scale is not enabled. You can enable it via Evaluate endpoint.');
+            context.log('Auto Scale is not enabled. You can enable it via Evaluate endpoint (which forces you to test results).');
             context.done();
         }
 
