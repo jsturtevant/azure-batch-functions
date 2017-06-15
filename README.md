@@ -36,6 +36,8 @@ To get started:
     - get your batch keys by running ```az batch account keys list -g dockerworkshop -n workshopbatch```
     - get the storage account key
 
+        ![get your storage keys in azure portal](/Assets/storage-keys-howto.png)
+
 ### Test function
 The following command will start the function host process in separate terminal and call the function ```GetPoolInfo``` passing the json object as body to request.  For any of the other functions replace the name (some don't need the sample data as well). 
 
@@ -49,5 +51,7 @@ func run GetPoolInfo -f GetPoolInfo/sample.dat
 func new --language JavaScript --template HttpTrigger --name NameOfFunction
 ```
 
+## Other info
 Find the docs for the node.js library at http://azure.github.io/azure-sdk-for-node/azure-batch/latest/
 
+Azure Batch has a useful (if early release) of a cross platform Batch view at https://github.com/Azure/BatchLabs.  As the project is very young there are a few missing features and you have to build the project yourself.
