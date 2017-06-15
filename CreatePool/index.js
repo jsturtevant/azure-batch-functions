@@ -28,7 +28,7 @@ module.exports = function (context, req) {
             displayName: poolid,
             vmSize: vmSize,
             virtualMachineConfiguration: vmconfig,
-            targetDedicated: numVMs,
+            targetDedicatedNodes: numVMs,
             targetLowPriorityNodes: numVMs,
             startTask: {
                 commandLine: "./docker_install_start_task.sh > startup.log",
