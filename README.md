@@ -24,7 +24,7 @@ az batch account create -l eastus -g azurebatchfunctionsrg -n myazurebatch
 ```
 
 ### Azure functions Component
-To get started:
+To learn about [testing and debuging Azure functions locally read the docs](https://docs.microsoft.com/en-us/azure/azure-functions/functions-run-local).  To get started with this project:
 
 1. Install azure functions runtime ```npm i -g azure-functions-core-tools```
 2. Clone the repo and cd into the folder
