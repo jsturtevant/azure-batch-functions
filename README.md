@@ -31,7 +31,7 @@ To get started:
 3.  Run ```npm install```
 4. Update rename  ```example.settings.json``` to ```local.settings.json```
 5. Upload [docker_install_start_task.sh](docker/docker_install_start_task.sh) to a storage account.
-6. Update settings:
+6. Update settings in ```local.settings.json```:
 
     - get your batch keys by running ```az batch account keys list -g dockerworkshop -n workshopbatch```
     - get the storage account key
