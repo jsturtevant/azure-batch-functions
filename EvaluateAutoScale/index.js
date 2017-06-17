@@ -12,8 +12,12 @@ module.exports = function (context, req) {
     var maxNodes = req.body.maxNodes;
 
     batch_client.pool.get(poolId).then((poolInfo) => {
-        return ensureAutoScaleSet(poolInfo, context);
-    }).then(result => {
+        context.log(`pool state: ${poolInfo.state}`);
+        return isAutoScaleEnabled(poolInfo);
+    }).then(poolInfo => {
+        context.log(`Auto Scale: ${poolInfo.enableAutoScale}`);
+        return ensureAutoScaleSet(batch_client, poolInfo);
+    }).then(_ => {
         return evaluateAutoScale(batch_client, poolId, maxNodes);
     }).then(evalResult => {
         context.log("Auto Scale Results:");
@@ -21,48 +25,37 @@ module.exports = function (context, req) {
         context.done();
     }).catch(err => {
         context.log('An error occurred.');
-        if (err.body)
-        {
-            context.log(err.body.code);
-            context.log(err.body.message);
-
-            context.log(err.body.values);
-        }else{
-            context.log(err);
-        }
-
+        printErrors(context, err);
         context.done();
     });
 
 };
 
-function ensureAutoScaleSet(poolInfo, context){
-    context.log(`pool state: ${poolInfo.state}`);
-
+function isAutoScaleEnabled(poolInfo){
     if(poolInfo.state != "active")
     {
-        console.log("Pool is not active");
-        
-        //what do I do with the promise?
-        context.done();
+        Promise.reject({code: "notActive"});
     }
 
-    if (poolInfo.enableAutoScale == false)
-    {
-        context.log('Auto Scale is not enabled.');
-        var autoScaleProperties ={
-            autoScaleFormula: `$TargetLowPriorityNodes = ${poolInfo.currentLowPriorityNodes};`,
-            autoScaleEvaluationInterval: moment.duration(5, 'minutes')
-        };
-
-        //enable if first and set to current.
-        return batch_client.pool.enableAutoScale(poolInfo.poolId, autoScaleProperties)
-    }
-
-    return Promise.resolve();
+    return Promise.resolve(poolInfo);
 }
 
-function evaluateAutoScale(batch_client, poolid, maxNodes){
+function ensureAutoScaleSet(batch_client, poolInfo){
+    if (poolInfo.enableAutoScale == true)
+    {
+        return Promise.resolve();
+    }
+
+    var autoScaleProperties ={
+        autoScaleFormula: `$TargetLowPriorityNodes = ${poolInfo.currentLowPriorityNodes};`,
+        autoScaleEvaluationInterval: moment.duration(5, 'minutes')
+    };
+
+    //enable if first and set to current.
+    return batch_client.pool.enableAutoScale(poolInfo.poolId, autoScaleProperties)
+}
+
+function evaluateAutoScale(batch_client, poolId, maxNodes){
        var myFormula = `maxNodes 		 =  ${maxNodes};
 
 // Get pending tasks for the past 15 minutes.
@@ -79,5 +72,19 @@ $targetVMs = $tasks > 0? $tasks:max(0, $TargetLowPriorityNodes/2);
 
 $TargetLowPriorityNodes = max(0, min($targetVMs, maxNodes));`;
 
-        return batch_client.pool.evaluateAutoScale(poolid, myFormula);
+        return batch_client.pool.evaluateAutoScale(poolId, myFormula);
+}
+
+function printErrors(context, err){
+    if (err.body)
+    {
+        context.log(err.body.code);
+        context.log(err.body.message);
+        context.log(err.body.values);
+    } else if (err.code && err.code === "notActive")
+    {
+        context.log("pool is not active");
+    } else {
+        context.log(err);
+    }
 }
