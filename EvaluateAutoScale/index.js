@@ -8,82 +8,59 @@ module.exports = function (context, req) {
     
     var batch_client = helpers.batchClientFactory();
     
-    var poolid = req.body.poolid;
+    var poolId = req.body.poolid;
     var maxNodes = req.body.maxNodes;
 
-    batch_client.pool.get(poolid).then((poolinfo) => {
-        context.log(`pool state: ${poolinfo.state}`);
-        
-        if(poolinfo.state != "active")
-        {
-            console.log("Pool is not active");
-            context.done();
-        }
-
-        if (poolinfo.enableAutoScale == false)
-        {
-            context.log('Auto Scale is not enabled.');
-            var autoScaleProperties ={
-                autoScaleFormula: `$TargetLowPriorityNodes = ${poolinfo.currentLowPriorityNodes};`,
-                autoScaleEvaluationInterval: moment.duration(5, 'minutes')
-            };
-
-            //enable if first and set to current.
-            batch_client.pool.enableAutoScale(poolid, autoScaleProperties).then(_ =>{
-                context.log('Auto Scale set.');
-                
-                evaluateAutoScale(batch_client, poolid, maxNodes).then(result => {
-                    context.log("Auto Scale Results:");
-                    context.log(result);
-
-                    context.done();
-                });
-                // .catch(err => {
-                //     context.log('An error occurred.');
-                //     context.log(err);
-                //     context.done();
-                // });
-
-            }).catch(err => {
-                context.log('An error occurred.');
-
-                if (err.body){
-                    context.log(err.body.code);
-                    context.log(err.body.message);
-
-                    context.log(err.body.values);
-                }else{
-                    context.log(err);
-                }
-                
-                context.done();
-            });
-        }
-
-
-        if (poolinfo.enableAutoScale == true)
-        {
-            context.log('Auto Scale is already enabled.');
-
-            evaluateAutoScale(batch_client, poolid, maxNodes).then(result => {
-                context.log("Auto Scale Results:");
-                context.log(result.results.replace("\$/gi", os.EOL + "\t$"));
-
-                context.done();
-            }).catch(err => {
-                context.log('An error occurred.');
-                context.log(err);
-                context.done();
-            });
-        }
-
+    batch_client.pool.get(poolId).then((poolInfo) => {
+        return ensureAutoScaleSet(poolInfo, context);
+    }).then(result => {
+        return evaluateAutoScale(batch_client, poolId, maxNodes);
+    }).then(evalResult => {
+        context.log("Auto Scale Results:");
+        context.log(evalResult.results.replace("\$/gi", os.EOL + "\t$"));
+        context.done();
     }).catch(err => {
         context.log('An error occurred.');
-        context.log(err);
+        if (err.body)
+        {
+            context.log(err.body.code);
+            context.log(err.body.message);
+
+            context.log(err.body.values);
+        }else{
+            context.log(err);
+        }
+
         context.done();
     });
 
 };
+
+function ensureAutoScaleSet(poolInfo, context){
+    context.log(`pool state: ${poolInfo.state}`);
+
+    if(poolInfo.state != "active")
+    {
+        console.log("Pool is not active");
+        
+        //what do I do with the promise?
+        context.done();
+    }
+
+    if (poolInfo.enableAutoScale == false)
+    {
+        context.log('Auto Scale is not enabled.');
+        var autoScaleProperties ={
+            autoScaleFormula: `$TargetLowPriorityNodes = ${poolInfo.currentLowPriorityNodes};`,
+            autoScaleEvaluationInterval: moment.duration(5, 'minutes')
+        };
+
+        //enable if first and set to current.
+        return batch_client.pool.enableAutoScale(poolInfo.poolId, autoScaleProperties)
+    }
+
+    return Promise.resolve();
+}
 
 function evaluateAutoScale(batch_client, poolid, maxNodes){
        var myFormula = `maxNodes 		 =  ${maxNodes};
