@@ -99,6 +99,10 @@ IF /I "%IN_PLACE_DEPLOYMENT%" NEQ "1" (
   IF !ERRORLEVEL! NEQ 0 goto error
 )
 
+echo Copying package.json
+xcopy "%DEPLOYMENT_SOURCE%\package.json" "%DEPLOYMENT_TARGET%" /yiq
+IF !ERRORLEVEL! NEQ 0 goto error
+
 :: 2. Restore npm
 call :RestoreNpmPackages "%DEPLOYMENT_TARGET%"
 
