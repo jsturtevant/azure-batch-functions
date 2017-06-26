@@ -14,5 +14,8 @@
     "azure-storage": "^2.1.0"
   },
   "repository": "https://github.com/jsturtevant/azure-batch-functions",
-  "README": "https://github.com/jsturtevant/azure-batch-functions/blob/master/README.md"
+  "README": "https://github.com/jsturtevant/azure-batch-functions/blob/master/README.md",
+  "devDependencies": {
+    "tape": "^4.6.3"
+  }
 }
