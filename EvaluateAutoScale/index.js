@@ -34,7 +34,7 @@ module.exports = function (context, req) {
 function isAutoScaleEnabled(poolInfo){
     if(poolInfo.state != "active")
     {
-        Promise.reject({code: "notActive"});
+        return Promise.reject({code: "notActive"});
     }
 
     return Promise.resolve(poolInfo);
