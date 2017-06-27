@@ -2,12 +2,20 @@ var batch = require('azure-batch');
 var helpers = require('../helpers/helpers.js');
 var os = require("os");
 var moment = require('moment');
+var validator = require('validator');
 
 module.exports = function (context, req) {
     context.log('processing...');
     
     var batch_client = helpers.batchClientFactory();
     
+    if (!req.body.poolId || validator.isEmpty(req.body.poolid)){
+        context.log("Invalid response");
+        context.res = { status: 400, body: 'must pass poolid' }; 
+        context.done();
+        return;
+    }
+
     var poolId = req.body.poolid;
     var maxNodes = req.body.maxNodes;
 
