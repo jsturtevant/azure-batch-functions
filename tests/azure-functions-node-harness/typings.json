@@ -1,0 +1,13 @@
+{
+  "name": "azure-functions-node-harness",
+  "main": "src/index.d.ts",
+  "homepage": "",
+  "version": "0.0.1",
+  "dependencies": {},
+  "globalDependencies": {
+    "node": "registry:dt/node#6.0.0+20160514165920"
+  },
+  "globalDevDependencies": {
+    "mocha": "registry:env/mocha#2.2.5+20160723033700"
+  }
+}
