@@ -26,6 +26,10 @@ IF NOT DEFINED DEPLOYMENT_SOURCE (
   SET DEPLOYMENT_SOURCE=%~dp0%.
 )
 
+IF NOT DEFINED DEPLOYMENT_TEMP (
+  SET DEPLOYMENT_TEMP=%~dp0%..\temp
+)
+
 IF NOT DEFINED DEPLOYMENT_TARGET (
   SET DEPLOYMENT_TARGET=%ARTIFACTS%\wwwroot
 )
@@ -54,46 +58,29 @@ IF NOT DEFINED KUDU_SYNC_CMD (
 
 echo Handling function App deployment.
 
-if "%SCM_USE_FUNCPACK%" == "1" (
-  call :DeployWithFuncPack
-) else (
-  call :DeployWithoutFuncPack
-)
+call :DeployWithoutFuncPack
 
 goto end
-
-:DeployWithFuncPack
-setlocal
-
-echo Using funcpack to optimize cold start
-
-:: 1. Copy to local storage
-echo Copying repository files to local storage
-xcopy "%DEPLOYMENT_SOURCE%\functions" "%DEPLOYMENT_TEMP%" /seyiq
-IF !ERRORLEVEL! NEQ 0 goto error
-
-:: 2. Restore npm
-call :RestoreNpmPackages "%DEPLOYMENT_TEMP%"
-
-:: 3. FuncPack
-pushd "%DEPLOYMENT_TEMP%"
-call funcpack pack .
-IF !ERRORLEVEL! NEQ 0 goto error
-popd
-
-:: 4. KuduSync
-call :ExecuteCmd "%KUDU_SYNC_CMD%" -v 50 -f "%DEPLOYMENT_TEMP%" -t "%DEPLOYMENT_TARGET%" -n "%NEXT_MANIFEST_PATH%" -p "%PREVIOUS_MANIFEST_PATH%" -i ".git;.hg;.deployment;deploy.cmd;node_modules"
-IF !ERRORLEVEL! NEQ 0 goto error
-
-exit /b %ERRORLEVEL%
-
 
 :DeployWithoutFuncPack
 setlocal
 
 echo Not using funcpack because SCM_USE_FUNCPACK is not set to 1
 
-:: 1. KuduSync
+:: 1. Copy to local storage
+echo Copying all files to local storage
+xcopy "%DEPLOYMENT_SOURCE%" "%DEPLOYMENT_TEMP%" /seyiq
+IF !ERRORLEVEL! NEQ 0 goto error
+
+:: 2. Restore npm for test
+call :RestoreNpmPackages "%DEPLOYMENT_TEMP%" "test"
+
+echo running unit tests
+pushd "%DEPLOYMENT_TEMP%"
+call node tests\test.run.all.js tests
+IF !ERRORLEVEL! NEQ 0 goto error
+popd
+
 IF /I "%IN_PLACE_DEPLOYMENT%" NEQ "1" (
   call :ExecuteCmd "%KUDU_SYNC_CMD%" -v 50 -f "%DEPLOYMENT_SOURCE%\functions" -t "%DEPLOYMENT_TARGET%" -n "%NEXT_MANIFEST_PATH%" -p "%PREVIOUS_MANIFEST_PATH%" -i ".git;.hg;.deployment;deploy.cmd"
   IF !ERRORLEVEL! NEQ 0 goto error
@@ -104,19 +91,27 @@ xcopy "%DEPLOYMENT_SOURCE%\package.json" "%DEPLOYMENT_TARGET%" /yiq
 IF !ERRORLEVEL! NEQ 0 goto error
 
 :: 2. Restore npm
-call :RestoreNpmPackages "%DEPLOYMENT_TARGET%"
+call :RestoreNpmPackages "%DEPLOYMENT_TARGET%" "prod"
 
 exit /b %ERRORLEVEL%
-
 
 :RestoreNpmPackages
 setlocal
 
-echo Restoring npm packages in %1
+echo Restoring npm packages in %1 
+echo restore is %2
 
 IF EXIST "%1\package.json" (
   pushd "%1"
-  call npm install --production
+
+  if %2 == "test" (
+    echo calling install 
+    call npm install 
+  ) else (
+    echo calling install production
+    call npm install --production
+  )
+
   IF !ERRORLEVEL! NEQ 0 goto error
   popd
 )
@@ -124,7 +119,11 @@ IF EXIST "%1\package.json" (
 FOR /F "tokens=*" %%i IN ('DIR /B %1 /A:D') DO (
   IF EXIST "%1\%%i\package.json" (
     pushd "%1\%%i"
-    call npm install --production
+    if %2 == "test" (
+      call npm install 
+    ) else (
+      call npm install --production
+    )
     IF !ERRORLEVEL! NEQ 0 goto error
     popd
   )
