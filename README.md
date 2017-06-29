@@ -1,5 +1,5 @@
 # azure-batch-functions
-Nodejs project working with Docker and [Azure Batch](https://azure.microsoft.com/en-us/services/batch/). There is [Batch ShipYard](https://azure.github.io/batch-shipyard/) for those who want some lighter.
+Nodejs project working with Docker and [Azure Batch](https://azure.microsoft.com/en-us/services/batch/).
 
 ## Developing
 
