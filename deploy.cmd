@@ -77,7 +77,7 @@ call :RestoreNpmPackages "%DEPLOYMENT_TEMP%" "test"
 
 echo running unit tests
 pushd "%DEPLOYMENT_TEMP%"
-call node tests\test.run.all.js tests
+call npm test
 IF !ERRORLEVEL! NEQ 0 goto error
 popd
 
