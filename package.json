@@ -17,6 +17,7 @@
   "repository": "https://github.com/jsturtevant/azure-batch-functions",
   "README": "https://github.com/jsturtevant/azure-batch-functions/blob/master/README.md",
   "devDependencies": {
+    "azure-functions-node-harness": "github:jsturtevant/azure-functions-node-harness#dev",
     "tape": "^4.6.3",
     "tape-catch": "^1.0.6",
     "testdouble": "^3.2.1"

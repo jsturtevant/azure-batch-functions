@@ -1,43 +1,44 @@
 var test = require('tape-catch');
 var td = require('testdouble');
 
-var funcFake = require('./func-fake/func-fake.js')
+var funcHarness = require('azure-functions-node-harness');
+var reqBuilder = require('azure-functions-node-harness/src/request-builder');
 var helpers = td.replace('../functions/helpers/helpers.js');
 
-var evalAutoScale = require('../functions/EvaluateAutoScale/index.js')
-
 test('Evaluate AutoScale Tests', function (group) {
-    group.test('if poolid is empty then return status 400', function (t){
+    var funcToTest = funcHarness('EvaluateAutoScale', { dirname: 'functions' });
+
+    group.test('if poolid is empty then return status 400', function (t) {
         t.plan(1);
 
-        var request = funcFake.httpRequest({
+        var request = reqBuilder.create({
             "poolid": "",
             "maxNodes": 4
         });
 
-        var context = funcFake.httpContext(request);
-
-        context.done = function (){
+        funcToTest.invoke({
+            req: request
+        }).then(context => {
             t.equal(400, context.res.status);
-        }
-
-        evalAutoScale(context, request);  
+        }).catch(err =>{
+            t.fail(`something went wrong: ${err}`);
+        });
     });
 
-    group.test('if poolid is null then return status 400', function (t){
+    group.test('if poolid is null then return status 400', function (t) {
         t.plan(1);
 
-        var request = funcFake.httpRequest({
+        var request = reqBuilder.create({
             "maxNodes": 4
         });
 
-        var context = funcFake.httpContext(request);
-
-        context.done = function (){
-            t.equal(400, context.res.status)
-        }
-
-        evalAutoScale(context, request);  
+        funcToTest.invoke({
+            req: request
+        }).then(context => {
+            t.equal(400, context.res.status);
+        }).catch(err =>{
+            t.fail(`something went wrong: ${err}`);
+        });
     });
 
     group.end();
