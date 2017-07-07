@@ -11,16 +11,14 @@ test('Evaluate AutoScale Tests', function (group) {
     group.test('if poolid is empty then return status 400', function (t) {
         t.plan(1);
 
-        var request = reqBuilder.create({
-            "poolid": "",
-            "maxNodes": 4
-        });
-
-        funcToTest.invoke({
-            req: request
+        funcToTest.invokeHttpTrigger({
+            reqBody: {
+                "poolid": "",
+                "maxNodes": 4
+            }
         }).then(context => {
             t.equal(400, context.res.status);
-        }).catch(err =>{
+        }).catch(err => {
             t.fail(`something went wrong: ${err}`);
         });
     });
@@ -28,15 +26,13 @@ test('Evaluate AutoScale Tests', function (group) {
     group.test('if poolid is null then return status 400', function (t) {
         t.plan(1);
 
-        var request = reqBuilder.create({
-            "maxNodes": 4
-        });
-
-        funcToTest.invoke({
-            req: request
+        funcToTest.invokeHttpTrigger({
+            reqBody: {
+                "maxNodes": 4
+            }
         }).then(context => {
             t.equal(400, context.res.status);
-        }).catch(err =>{
+        }).catch(err => {
             t.fail(`something went wrong: ${err}`);
         });
     });
