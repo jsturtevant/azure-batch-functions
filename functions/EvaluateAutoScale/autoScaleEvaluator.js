@@ -11,7 +11,7 @@ module.exports = class AutoScaleEvaluator {
         }).then(poolInfo => {
             return ensureAutoScaleSet(batch_client, poolInfo);
         }).then(_ => {
-            return executeEvaluateAutoScale(batch_client, poolId, maxNodes);
+            return executeEvaluateAutoScale(poolId, maxNodes);
         });
     }
 
