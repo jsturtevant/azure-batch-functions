@@ -9,7 +9,7 @@ module.exports = function (context, req) {
     
     var batch_client = helpers.batchClientFactory();
     
-    if (!req.body.poolId || validator.isEmpty(req.body.poolid)){
+    if (!req.body.poolid || validator.isEmpty(req.body.poolid)){
         context.log("Invalid response");
         context.res = { status: 400, body: 'must pass poolid' }; 
         context.done();
@@ -60,7 +60,7 @@ function ensureAutoScaleSet(batch_client, poolInfo){
     };
 
     //enable if first and set to current.
-    return batch_client.pool.enableAutoScale(poolInfo.poolId, autoScaleProperties)
+    return batch_client.pool.enableAutoScale(poolInfo.id, autoScaleProperties)
 }
 
 function evaluateAutoScale(batch_client, poolId, maxNodes){
