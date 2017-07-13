@@ -28,10 +28,11 @@ To learn about [testing and debuging Azure functions locally read the docs](http
 
 1. Install azure functions runtime ```npm i -g azure-functions-core-tools```
 2. Clone the repo and cd into the folder
-3.  Run ```npm install```
-4. Update rename  ```example.settings.json``` to ```local.settings.json```
-5. Upload [docker_install_start_task.sh](docker/docker_install_start_task.sh) to a storage account.
-6. Update settings in ```local.settings.json```:
+3. Run ```npm install```
+4. Run ```npm test``` to run unit tests
+5. Update rename  ```example.settings.json``` to ```local.settings.json```
+6. Upload [docker_install_start_task.sh](docker/docker_install_start_task.sh) to a storage account.
+7. Update settings in ```local.settings.json```:
 
     - get your batch keys by running ```az batch account keys list -g dockerworkshop -n workshopbatch```
     - get the storage account key
