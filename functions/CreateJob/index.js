@@ -34,7 +34,7 @@ module.exports = function (context, req) {
         };
 
         var job_config = {
-            id:jobId,
+            id:jobid,
             displayName:"process audio files",
             jobPreparationTask:job_prep_task_config,
             poolInfo:pool_config
